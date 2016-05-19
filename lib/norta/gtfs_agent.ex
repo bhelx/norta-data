@@ -1,5 +1,7 @@
-defmodule Norta.GTFS.Agent do
+defmodule Norta.GtfsAgent do
   require Logger
+
+  @gtfs_data_folder "data/RTA_GTFSDataFeed/20160417V.clean"
 
   def start_link do
     Agent.start_link(fn -> load_gtfs end, name: __MODULE__)
@@ -7,14 +9,14 @@ defmodule Norta.GTFS.Agent do
 
   def get_route(route_name) do
     Agent.get(__MODULE__, fn gtfs ->
-      route_id = Map.get(gtfs[:route_short_names], route_name)
-      Map.get(gtfs[:routes], route_id)
+      route_id = gtfs.route_short_names[route_name]
+      gtfs.routes[route_id]
     end)
   end
 
   def get_routes do
     Agent.get(__MODULE__, fn gtfs ->
-      gtfs[:routes]
+      gtfs.routes
       |> Map.values
       |> Enum.map(fn r ->
         Map.drop(r, [:shapes])
@@ -24,8 +26,8 @@ defmodule Norta.GTFS.Agent do
 
   defp load_gtfs do
     Logger.info "Loading GTFS Data..."
-    gtfs = Norta.GTFS.Parser.parse
+    gtfs_data = Gtfs.parse(@gtfs_data_folder)
     Logger.info "GTFS Data Loaded!"
-    gtfs
+    gtfs_data
   end
 end

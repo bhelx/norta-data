@@ -6,6 +6,6 @@ defmodule Norta.PageView do
   end
 
   def routes do
-    Norta.GTFS.Agent.get_routes
+    Norta.GtfsAgent.get_routes
   end
 end

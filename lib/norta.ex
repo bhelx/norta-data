@@ -19,7 +19,7 @@ defmodule Norta do
       # This GenEvent is for dispatching vehicle updates
       children = children ++ [worker(GenEvent, [[name: :feed_update_handler]])]
       # This Agent loads the GTFS routes
-      children = children ++ [worker(Norta.GTFS.Agent, [])]
+      children = children ++ [worker(Norta.GtfsAgent, [])]
     end
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
