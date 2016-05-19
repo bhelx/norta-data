@@ -26,7 +26,7 @@ defmodule Norta.VehicleChannel do
     # TODO improve
     all_vehicles = UpdateHandler.vehicles
     Enum.each(routes, fn route ->
-      vehicles = Enum.filter(all_vehicles, fn v -> v.route == route end)
+      vehicles = Map.get(all_vehicles, route, [])
       push socket, "update", %{vehicles: vehicles , route: route}
     end)
     {:noreply, socket}

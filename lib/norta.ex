@@ -28,7 +28,7 @@ defmodule Norta do
     {:ok, sup} = Supervisor.start_link(children, opts)
 
     if Mix.env != :test do
-      GenEvent.add_handler(:feed_update_handler, Norta.Feed.UpdateHandler, [])
+      GenEvent.add_handler(:feed_update_handler, Norta.Feed.UpdateHandler, %{})
     end
 
     {:ok, sup}
