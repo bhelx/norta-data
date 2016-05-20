@@ -7,7 +7,7 @@ I hope to create client libraries for Android and ios.
 
 ## Documentation
 
-There is currently no documentation for this API but I am working on documentation for the underlying [GTFS and Realtime data](data/norta_realtime_api.md).
+There is currently no documentation for this API but I am working on documentation for the underlying [GTFS and Realtime data](docs/norta_realtime_api.md).
 
 ## Hosted
 
