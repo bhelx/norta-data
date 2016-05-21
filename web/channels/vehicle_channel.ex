@@ -1,7 +1,7 @@
 defmodule Norta.VehicleChannel do
   use Norta.Web, :channel
   require Logger
-  alias Norta.Feed.UpdateHandler
+  alias Norta.Feed.ChannelBroadcastHandler
 
   intercept ["update"]
 
@@ -29,7 +29,7 @@ defmodule Norta.VehicleChannel do
 
   def handle_info({:after_join, routes}, socket) do
     # TODO improve
-    all_vehicles = UpdateHandler.vehicles
+    all_vehicles = ChannelBroadcastHandler.vehicles
     Enum.each(routes, fn route ->
       vehicles = Map.get(all_vehicles, route, [])
       push socket, "update", %{vehicles: vehicles, route: route}

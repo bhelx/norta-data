@@ -1,5 +1,6 @@
 defmodule Norta.Feed.Fetcher do
   use GenServer, otp_app: :norta
+  use Timex
   require Logger
   alias Norta.Feed.Parser
 
@@ -33,10 +34,12 @@ defmodule Norta.Feed.Fetcher do
 
     if state[:response_hash] == hash do
       Logger.info "md5 matched #{Base.encode64(hash)}"
+      notify_server_response(:md5_match)
     else
       vehicles = Parser.parse_vehicles(body)
       Logger.info "Found #{length(vehicles)} vehicles with hash #{Base.encode64(hash)}"
-      GenEvent.notify(:feed_update_handler, {:update, vehicles})
+      notify_server_response(:success)
+      notify_vehicles(vehicles)
     end
 
     state = %{state | response_hash: hash}
@@ -50,14 +53,29 @@ defmodule Norta.Feed.Fetcher do
   end
 
   defp fetch_vehicles do
-    HTTPoison.get(@service_endpoint, @service_headers, [params: service_params])
+    HTTPoison.get(@service_endpoint, @service_headers, [params: norta_service_params])
   end
 
-  defp service_params do
+  defp norta_service_params do
     %{key: Application.fetch_env!(:norta, :api_key)}
   end
 
   defp set_timer(time \\ @default_feed_rate) do
     Process.send_after(self(), :fetch, time)
+  end
+
+  defp notify_vehicles(vehicles) do
+    notify_feed(:vehicles, %{vehicles: vehicles})
+  end
+
+  defp notify_server_response(code) do
+    notify_feed(:server_response, %{code: code})
+  end
+
+  defp notify_feed(event, payload) do
+    # insert timestamp
+    payload = Map.put(payload, :event_datetime, Ecto.DateTime.utc())
+    # send to the event stream
+    GenEvent.notify(:feed_event_stream, {event, payload})
   end
 end

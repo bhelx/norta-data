@@ -17,7 +17,7 @@ defmodule Norta do
       # This worker fetches and dispatches vehicle updates
       children = children ++ [worker(Norta.Feed.Fetcher, [])]
       # This GenEvent is for dispatching vehicle updates
-      children = children ++ [worker(GenEvent, [[name: :feed_update_handler]])]
+      children = children ++ [worker(GenEvent, [[name: :feed_event_stream]])]
       # This Agent loads the GTFS routes
       children = children ++ [worker(Norta.GtfsAgent, [])]
     end
@@ -28,7 +28,8 @@ defmodule Norta do
     {:ok, sup} = Supervisor.start_link(children, opts)
 
     if Mix.env != :test do
-      GenEvent.add_handler(:feed_update_handler, Norta.Feed.UpdateHandler, %{})
+      GenEvent.add_handler(:feed_event_stream, Norta.Feed.ChannelBroadcastHandler, %{})
+      GenEvent.add_handler(:feed_event_stream, Norta.Feed.LoggingHandler, %{})
     end
 
     {:ok, sup}
