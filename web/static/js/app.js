@@ -155,7 +155,7 @@ let getRouteShape = (route, done) => {
 }
 
 ready(() => {
-  map = L.map('map', {zoomControl: false});
+  let map = L.map('map', {zoomControl: false});
 
   new L.Control.Zoom({ position: 'topright' }).addTo(map);
 
