@@ -188,25 +188,27 @@ class Menu extends React.Component {
     return this.state.currentRoutes.includes(route)
   }
 
-  toggleChosen(route) {
+  toggleChosen(route, event) {
+    event.preventDefault();
+
     let routes = this.state.currentRoutes.slice(0); // must clone
     let index = routes.indexOf(route);
 
     if (index > -1) {
-      routes.splice(index, 1)
+      routes.splice(index, 1);
     } else {
-      routes.push(route)
+      routes.push(route);
     }
 
-    this.setState({currentRoutes: routes})
+    this.setState({currentRoutes: routes});
 
     window.application.setCurrentRoutes(routes);
-    window.application.channel.push("vehicles:subscribe", {routes: routes})
+    window.application.channel.push("vehicles:subscribe", {routes: routes});
   }
 
   render() {
     let routeLinks = this.props.routes.map((r) => {
-      let id = r.route_short_name
+      let id = r.route_short_name;
 
       return (
           <li className="pure-menu-item">

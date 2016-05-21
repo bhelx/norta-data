@@ -115,7 +115,8 @@ appears on the left side of the page.
 /*
 Change color of the anchor links on hover/focus.
  */
-#menu .pure-menu li a:hover {
+#menu .pure-menu li a:hover,
+#menu .pure-menu li a:focus {
   background: #333;
 }
 
@@ -170,18 +171,13 @@ small screens.
   display: block; /* show this only on small screens */
   top: 0;
   left: 0; /* "#menu width" */
-  background: #000;
+  background: #191818;
   background: rgba(0,0,0,0.7);
   font-size: 10px; /* change this value to increase/decrease button size */
   z-index: 10;
   width: 2em;
   height: auto;
   padding: 2.1em 1.6em;
-}
-
-.menu-link:hover
-{
-  background: #000;
 }
 
 .menu-link span {
