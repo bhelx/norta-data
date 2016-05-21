@@ -14,24 +14,18 @@ defmodule Norta do
     ]
 
     if Mix.env != :test do
-      # This worker fetches and dispatches vehicle updates
-      children = children ++ [worker(Norta.Feed.Fetcher, [])]
-      # This GenEvent is for dispatching vehicle updates
-      children = children ++ [worker(GenEvent, [[name: :feed_update_handler]])]
       # This Agent loads the GTFS routes
       children = children ++ [worker(Norta.GtfsAgent, [])]
+      # This GenEvent is for dispatching vehicle updates
+      children = children ++ [worker(Norta.Feed.EventManager, [])]
+      # This worker fetches and dispatches vehicle updates
+      children = children ++ [worker(Norta.Feed.Fetcher, [])]
     end
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Norta.Supervisor]
-    {:ok, sup} = Supervisor.start_link(children, opts)
-
-    if Mix.env != :test do
-      GenEvent.add_handler(:feed_update_handler, Norta.Feed.UpdateHandler, %{})
-    end
-
-    {:ok, sup}
+    Supervisor.start_link(children, opts)
   end
 
   # Tell Phoenix to update the endpoint configuration

@@ -41,7 +41,8 @@ defmodule Norta.Mixfile do
      {:timex, "~> 2.1.4"},
      {:csv, "~> 1.4.0"},
      {:geo, "~> 1.0"},
-     {:gtfs, "~> 0.0"}]
+     {:gtfs, "~> 0.0"},
+     {:druuid, "~> 0.1"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
