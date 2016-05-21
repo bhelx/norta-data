@@ -3,7 +3,7 @@ defmodule Norta.Feed.Fetcher do
   require Logger
   alias Norta.Feed.Parser
 
-  @default_feed_rate 4_000 # every 4 seconds
+  @default_feed_rate 4_000 # every 8 seconds
 
   @service_endpoint "http://gpsinfo.norta.com/"
   @service_headers [{"Connection", "keep-alive"}]

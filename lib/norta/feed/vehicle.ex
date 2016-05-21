@@ -19,7 +19,7 @@ defmodule Norta.Feed.Vehicle do
     gmt: String
   }
 
-  @stale_time 600 # 10 minutes
+  @stale_time 120 # 2 minutes
 
   def convert_time(vehicle) do
     if vehicle.gmt do

@@ -7,5 +7,6 @@ defmodule Norta.PageView do
 
   def routes do
     Norta.GtfsAgent.get_routes
+    |> Enum.sort(fn(r1, r2) -> r1.route_long_name < r2.route_long_name end)
   end
 end

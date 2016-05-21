@@ -5,13 +5,18 @@ defmodule Norta.VehicleChannel do
 
   intercept ["update"]
 
-  def join("vehicles:routes", payload, socket) do
-    routes = payload["routes"]
-
+  def join("vehicles:routes", %{"routes" => routes}, socket) do
     Process.flag(:trap_exit, true)
     send(self, {:after_join, routes})
 
     {:ok, assign(socket, :routes, routes)}
+  end
+
+  def handle_in("vehicles:subscribe", %{"routes" => routes}, socket) do
+    Process.flag(:trap_exit, true)
+    send(self, {:after_join, routes})
+
+    {:noreply, assign(socket, :routes, routes)}
   end
 
   def handle_out("update", payload, socket) do
@@ -27,7 +32,7 @@ defmodule Norta.VehicleChannel do
     all_vehicles = UpdateHandler.vehicles
     Enum.each(routes, fn route ->
       vehicles = Map.get(all_vehicles, route, [])
-      push socket, "update", %{vehicles: vehicles , route: route}
+      push socket, "update", %{vehicles: vehicles, route: route}
     end)
     {:noreply, socket}
   end
