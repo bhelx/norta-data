@@ -3,6 +3,7 @@ defmodule Norta.Feed.LoggingHandler do
   require Logger
   alias Norta.Repo
   alias Norta.ServerResponse
+  alias Norta.Vehicle
 
   def handle_event({:server_response, payload}, state) do
     Logger.info("Got server response #{payload[:code]}")
@@ -13,6 +14,19 @@ defmodule Norta.Feed.LoggingHandler do
   end
   def handle_event({:vehicles, payload}, state) do
     Logger.info("Got vehicles event")
+
+    payload[:vehicles]
+    |> Enum.map(&Vehicle.from_map/1)
+    |> Enum.each(fn changeset ->
+      case Repo.insert(changeset) do
+        {:ok, model} ->
+          Logger.info("Wrote model")
+        {:error, changset} ->
+          Logger.info("Error writing vehicle: #{inspect changeset.errors}")
+          Logger.info(inspect changeset)
+      end
+    end)
+
     {:ok, state}
   end
 
