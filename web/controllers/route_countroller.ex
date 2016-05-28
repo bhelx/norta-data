@@ -2,7 +2,7 @@ defmodule Norta.RouteController do
   use Norta.Web, :controller
 
   def show(conn, %{"route_id" => route_id}) do
-    route = Norta.GtfsAgent.get_route(route_id)
+    route = Norta.GTFSAgent.get_route(route_id)
     json conn, route_to_geo(route)
   end
 
@@ -12,11 +12,14 @@ defmodule Norta.RouteController do
 
     coords =
       route.shapes
-      |> Enum.map(fn shape -> [shape.shape_pt_lon, shape.shape_pt_lat] end)
+      |> Enum.map(fn {_id, shapes} ->
+        Enum.map(shapes, fn shape ->
+          [shape.shape_pt_lon, shape.shape_pt_lat]
+        end)
+      end)
 
     %{
-      type: "LineString",
-      coordinates: coords,
+      lines: coords,
       properties: %{style: style}
     }
   end

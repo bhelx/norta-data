@@ -15,7 +15,7 @@ defmodule Norta do
 
     if Mix.env != :test do
       # This Agent loads the GTFS routes
-      children = children ++ [worker(Norta.GtfsAgent, [])]
+      children = children ++ [worker(Norta.GTFSAgent, [])]
       # This GenEvent is for dispatching vehicle updates
       children = children ++ [worker(Norta.Feed.EventManager, [])]
       # This Agent holds the state about Stale vehicles

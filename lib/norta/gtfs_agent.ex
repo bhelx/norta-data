@@ -1,4 +1,4 @@
-defmodule Norta.GtfsAgent do
+defmodule Norta.GTFSAgent do
   require Logger
 
   @gtfs_data_folder "data/RTA_GTFSDataFeed/20160417V.clean"
@@ -19,14 +19,15 @@ defmodule Norta.GtfsAgent do
       gtfs.routes
       |> Map.values
       |> Enum.map(fn r ->
-        Map.drop(r, [:shapes])
+        # We clear out the trips, don't need them
+        Map.drop(r, [:trips])
       end)
     end)
   end
 
   defp load_gtfs do
     Logger.info "Loading GTFS Data..."
-    gtfs_data = Gtfs.parse(@gtfs_data_folder)
+    gtfs_data = GTFS.parse(@gtfs_data_folder)
     Logger.info "GTFS Data Loaded!"
     gtfs_data
   end

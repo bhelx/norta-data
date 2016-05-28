@@ -63,7 +63,9 @@ class Application {
 
     // First remove any unsubscribed route layers
     removed.forEach(route => {
-      this.map.removeLayer(this.routeLayers[route]);
+      this.routeLayers[route].forEach(layer => {
+        this.map.removeLayer(layer);
+      });
       this.routeLayers[route] = null;
       // remove the vehicles too
       this.updateVehicles(route, []);
@@ -75,12 +77,19 @@ class Application {
         if (err) return console.log(err)
 
         let style = Object.assign(this.defaultRouteStyle, data.properties.style);
-        let layer = L.geoJson(data, {style: style})
+        let layers = data.lines.map(line => {
+          return L.geoJson({
+                   type: "LineString",
+                   coordinates: line
+                 }, {style: style});
+        });
 
-        layer.addTo(this.map)
-        layer.bringToBack()
+        layers.forEach(layer => {
+          layer.addTo(this.map);
+          layer.bringToBack();
+        });
 
-        this.routeLayers[route] = layer;
+        this.routeLayers[route] = layers;
       })
     });
   }
