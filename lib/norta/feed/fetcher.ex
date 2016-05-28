@@ -4,7 +4,7 @@ defmodule Norta.Feed.Fetcher do
   require Logger
   alias Norta.Feed.Parser
 
-  @default_feed_rate 4_000 # every 8 seconds
+  @default_feed_rate 4_000 # every 4 seconds
 
   @service_endpoint "http://gpsinfo.norta.com/"
   @service_headers [{"Connection", "keep-alive"}]
@@ -12,7 +12,10 @@ defmodule Norta.Feed.Fetcher do
   @epoch_offset Druuid.epoch_offset({{2016, 1, 1}, {0, 0, 0}})
 
   def start_link do
-    initial_state = %{response_hash: nil}
+    initial_state = %{
+      response_hash: nil,
+      stales: %{}
+    }
     GenServer.start_link(__MODULE__, initial_state, name: :feed_fetcher)
   end
 
@@ -35,16 +38,52 @@ defmodule Norta.Feed.Fetcher do
       Logger.info "md5 matched #{Base.encode64(hash)}"
       notify_server_response(:md5_match)
     else
-      vehicles = Parser.parse_vehicles(body)
+      # will return nil if there was a problem
+      vehicles = parse_response(body)
 
-      Logger.info "Found #{length(vehicles)} vehicles with hash #{Base.encode64(hash)}"
-      notify_server_response(:success)
-      notify_vehicles(vehicles)
+      if vehicles do
+        Logger.info "Found #{length(vehicles)} vehicles with hash #{Base.encode64(hash)}"
+
+        # Find new vehicles marked as stale
+        marked_stale =
+          vehicles
+          |> Enum.filter(fn v -> v[:stale] end)
+          |> Enum.map(fn v -> {v[:name], v} end)
+          |> Enum.into(%{})
+
+        IO.inspect("marked stale")
+        IO.inspect(length(Map.keys(marked_stale)))
+        IO.inspect(Map.keys(marked_stale))
+
+        # Merge them in
+        stales = Map.merge(state[:stales], marked_stale)
+
+        # Look for any non stale vehicles that may have been mis-labeled
+        # as non-stale and replace them with our persisted vehicles which
+        # we know to have the correct datetime
+        fixed_vehicles =
+          vehicles
+          |> Enum.map(fn v ->
+            candidate = stales[v[:name]]
+            if candidate && vehicles_equal(v, candidate) do
+              candidate
+            else
+              v
+            end
+          end)
+
+        state = %{state | stales: stales}
+
+        notify_server_response(:success)
+        notify_vehicles(fixed_vehicles)
+      else # there was a problem parsing the vehicles, should send an event
+        #TODO send event
+      end
     end
 
     state = %{state | response_hash: hash}
 
-    Logger.info("Fetcher State: #{inspect state}")
+    Logger.debug("Fetcher State: #{inspect state}")
 
     {state, @default_feed_rate}
   end
@@ -81,4 +120,25 @@ defmodule Norta.Feed.Fetcher do
     # send to the event stream
     Norta.Feed.EventManager.notify(event, payload)
   end
+
+  defp vehicles_equal(v1, v2) do
+    v1[:name] == v2[:name] &&
+    v1[:speed] == v2[:speed] &&
+    v1[:route] == v2[:route] &&
+    v1[:lat] == v2[:lat] &&
+    v1[:lng] == v2[:lng] &&
+    v1[:bearing] == v2[:bearing]
+    v1[:train] == v2[:train]
+  end
+
+  defp parse_response(body) do
+    try do
+      Parser.parse_vehicles(body)
+    catch
+      _ ->
+        Logger.info("Got Fetcher error")
+        nil
+    end
+  end
+
 end

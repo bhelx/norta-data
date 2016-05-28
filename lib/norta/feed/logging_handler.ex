@@ -23,7 +23,7 @@ defmodule Norta.Feed.LoggingHandler do
     |> Enum.each(fn changeset ->
       case Repo.insert(changeset) do
         {:ok, model} ->
-          Logger.info("Wrote model")
+          Logger.debug("Wrote model")
         {:error, changset} ->
           Logger.info("Error writing vehicle: #{inspect changeset.errors}")
           Logger.info(inspect changeset)

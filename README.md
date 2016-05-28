@@ -80,13 +80,3 @@ heroku config:set NORTA_API_KEY="myapikey123"
 ```
 heroku run mix ecto.migrate
 ```
-
-## Configure Android App
-
-When you open the app on your phone you are asked to enter a server url. Enter:
-
-```
-https://mysterious-meadow-6277.herokuapp.com/update
-```
-
-where `mysterious-meadow-6277` would be your hostname

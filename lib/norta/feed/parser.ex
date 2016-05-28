@@ -67,10 +67,10 @@ defmodule Norta.Feed.Parser do
         |> Map.put(:stale, stale)
         |> Map.put(:reading_time, formatted_time)
       else
-        vehicle_map
+        Map.put(vehicle_map, :stale, true)
       end
     else
-      vehicle_map
+      Map.put(vehicle_map, :stale, true)
     end
   end
   def parse_gmt_time(time) do

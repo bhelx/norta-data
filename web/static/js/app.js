@@ -23,7 +23,7 @@ class Application {
     this.currentRoutes = [];
     this.setCurrentRoutes(opts.routes || ['11', '12', '91']);
     this.routeLayers = {};
-    this.showStale = opts.state;
+    this.showStale = opts.stale;
     this.markers = {};
 
     this.defaultRouteStyle = {
@@ -40,6 +40,7 @@ class Application {
       })
 
     this.channel.on("update", payload => {
+      console.log(payload);
       this.updateVehicles(payload.route, payload.vehicles);
     });
   }

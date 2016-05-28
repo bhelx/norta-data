@@ -26,7 +26,7 @@ config :norta, Norta.Endpoint,
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console,
-  #level: :error,
+  level: :info,
   utc_log: true
 
 # Set a higher stacktrace during development.
