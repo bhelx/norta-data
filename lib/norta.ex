@@ -18,7 +18,9 @@ defmodule Norta do
       children = children ++ [worker(Norta.GtfsAgent, [])]
       # This GenEvent is for dispatching vehicle updates
       children = children ++ [worker(Norta.Feed.EventManager, [])]
-      # This worker fetches and dispatches vehicle updates
+      # This Agent holds the state about Stale vehicles
+      children = children ++ [worker(Norta.Feed.StaleAgent, [])]
+      # This GenServer fetches and dispatches vehicle updates
       children = children ++ [worker(Norta.Feed.Fetcher, [])]
     end
 

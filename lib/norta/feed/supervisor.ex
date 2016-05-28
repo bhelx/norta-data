@@ -1,9 +1,8 @@
-defmodule Norta.Feed.Fetcher do
-  use GenServer, otp_app: :norta
+defmodule Norta.Feed.Supervisor do
+  use Supervisor, otp_app: :norta
   use Timex
   require Logger
   alias Norta.Feed.Parser
-  alias Norta.Feed.StaleAgent
 
   @default_feed_rate 4_000 # every 4 seconds
 
@@ -14,9 +13,10 @@ defmodule Norta.Feed.Fetcher do
 
   def start_link do
     initial_state = %{
-      response_hash: nil
+      response_hash: nil,
+      stales: %{}
     }
-    GenServer.start_link(__MODULE__, initial_state, name: :feed_fetcher)
+    Supervisor.start_link(__MODULE__, initial_state, name: :feed_fetcher)
   end
 
   def init(state) do
@@ -51,8 +51,12 @@ defmodule Norta.Feed.Fetcher do
           |> Enum.map(fn v -> {v[:name], v} end)
           |> Enum.into(%{})
 
+        IO.inspect("marked stale")
+        IO.inspect(length(Map.keys(marked_stale)))
+        IO.inspect(Map.keys(marked_stale))
+
         # Merge them in
-        stales = StaleAgent.merge(marked_stale)
+        stales = Map.merge(state[:stales], marked_stale)
 
         # Look for any non stale vehicles that may have been mis-labeled
         # as non-stale and replace them with our persisted vehicles which
@@ -67,6 +71,8 @@ defmodule Norta.Feed.Fetcher do
               v
             end
           end)
+
+        state = %{state | stales: stales}
 
         notify_server_response(:success)
         notify_vehicles(fixed_vehicles)
