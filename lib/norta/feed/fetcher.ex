@@ -71,7 +71,7 @@ defmodule Norta.Feed.Fetcher do
         notify_server_response(:success)
         notify_vehicles(fixed_vehicles)
       else # there was a problem parsing the vehicles, should send an event
-        #TODO send event
+        #TODO send event because xml failed
       end
     end
 
@@ -126,6 +126,10 @@ defmodule Norta.Feed.Fetcher do
   end
 
   defp parse_response(body) do
-    Parser.parse_vehicles(body)
+    try do
+      Parser.parse_vehicles(body)
+    catch
+      :exit, _ -> nil
+    end
   end
 end
