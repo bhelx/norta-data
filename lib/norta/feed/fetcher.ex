@@ -132,13 +132,6 @@ defmodule Norta.Feed.Fetcher do
   end
 
   defp parse_response(body) do
-    try do
-      Parser.parse_vehicles(body)
-    catch
-      _ ->
-        Logger.info("Got Fetcher error")
-        nil
-    end
+    Parser.parse_vehicles(body)
   end
-
 end
