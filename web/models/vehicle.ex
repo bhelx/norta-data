@@ -16,11 +16,12 @@ defmodule Norta.Vehicle do
     field :gmt, :string
     field :reading_time, Ecto.DateTime
     field :event_id, :integer
+    field :stale, :boolean
 
     timestamps
   end
 
-  @required_fields ~w(route rt_name name lat lng bearing speed car_type train event_id)
+  @required_fields ~w(route rt_name name lat lng bearing speed car_type train event_id stale)
   @optional_fields ~w(reading_time gmt)
 
   @doc """
