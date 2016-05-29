@@ -5,6 +5,8 @@ defmodule Norta.Feed.Parser do
   alias Timex.Format.DateTime.Formatter
   alias Norta.Feed.XmlNode
 
+  @stale_time 120 # 2 minutes
+
   def parse_vehicles(xml_string) do
     doc = Norta.Feed.XmlNode.from_string(xml_string)
 
