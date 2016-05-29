@@ -13,6 +13,7 @@ defmodule Norta.Vehicle do
     field :speed, :float
     field :car_type, :string
     field :train, :integer
+    field :gmt, :string
     field :reading_time, Ecto.DateTime
     field :event_id, :integer
 
@@ -20,9 +21,7 @@ defmodule Norta.Vehicle do
   end
 
   @required_fields ~w(route rt_name name lat lng bearing speed car_type train event_id)
-  @optional_fields ~w(reading_time)
-
-  @stale_time 120 # 2 minutes
+  @optional_fields ~w(reading_time gmt)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
