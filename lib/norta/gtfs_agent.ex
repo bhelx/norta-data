@@ -3,8 +3,8 @@ defmodule Norta.GTFSAgent do
 
   @gtfs_data_folder "data/RTA_GTFSDataFeed/20160417V.clean"
 
-  def start_link do
-    Agent.start_link(fn -> load_gtfs end, name: __MODULE__)
+  def start_link(state) do
+    Agent.start_link(fn -> state end, name: __MODULE__)
   end
 
   def get_route(route_name) do
@@ -25,7 +25,7 @@ defmodule Norta.GTFSAgent do
     end)
   end
 
-  defp load_gtfs do
+  def load_gtfs do
     Logger.info "Loading GTFS Data..."
     gtfs_data = GTFS.parse(@gtfs_data_folder)
     Logger.info "GTFS Data Loaded!"

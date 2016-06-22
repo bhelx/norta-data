@@ -1,5 +1,6 @@
 defmodule Norta do
   use Application
+  require Logger
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
@@ -13,9 +14,11 @@ defmodule Norta do
       supervisor(Norta.Repo, [])
     ]
 
+    gtfs_data = Norta.GTFSAgent.load_gtfs
+
     if Mix.env != :test do
       # This Agent loads the GTFS routes
-      children = children ++ [worker(Norta.GTFSAgent, [])]
+      children = children ++ [worker(Norta.GTFSAgent, [gtfs_data])]
       # This GenEvent is for dispatching vehicle updates
       children = children ++ [worker(Norta.Feed.EventManager, [])]
       # This Agent holds the state about Stale vehicles

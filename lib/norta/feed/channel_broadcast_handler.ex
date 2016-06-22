@@ -1,6 +1,5 @@
 defmodule Norta.Feed.ChannelBroadcastHandler do
   use GenEvent, otp_app: :norta
-
   import Norta.Endpoint, only: [broadcast: 3]
 
   def vehicles do
