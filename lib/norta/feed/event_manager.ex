@@ -1,10 +1,9 @@
-
 defmodule Norta.Feed.EventManager do
   use GenServer
   require Logger
 
   @name __MODULE__
-  @dispatcher :feed_event_stream
+  @dispatcher Norta.Feed.EventStream
 
   def start_link do
     GenServer.start_link(@name, [], [name: @name])

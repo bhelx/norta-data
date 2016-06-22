@@ -1,9 +1,10 @@
 defmodule Norta.Feed.ChannelBroadcastHandler do
   use GenEvent, otp_app: :norta
   import Norta.Endpoint, only: [broadcast: 3]
+  @dispatcher Norta.Feed.EventStream
 
   def vehicles do
-    GenEvent.call(:feed_event_stream, __MODULE__, :vehicles)
+    GenEvent.call(@dispatcher, __MODULE__, :vehicles)
   end
 
   def handle_event({:vehicles, payload}, prev_vehicle_groups) do
