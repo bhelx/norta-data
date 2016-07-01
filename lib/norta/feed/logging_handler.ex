@@ -52,4 +52,14 @@ defmodule Norta.Feed.LoggingHandler do
       event_id: payload[:event_id]
     }
   end
+  def server_response_for(payload = %{code: :invalid_xml}) do
+    %ServerResponse{
+      md5_match: false,
+      xml_valid: false,
+      status_code: 200,
+      response_valid: false,
+      inserted_at: payload[:event_datetime],
+      event_id: payload[:event_id]
+    }
+  end
 end

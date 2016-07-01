@@ -71,7 +71,7 @@ defmodule Norta.Feed.Fetcher do
         notify_server_response(:success)
         notify_vehicles(fixed_vehicles)
       else # there was a problem parsing the vehicles, should send an event
-        #TODO send event because xml failed
+        notify_server_response(:invalid_xml)
       end
     end
 
