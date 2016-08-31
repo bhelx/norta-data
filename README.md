@@ -11,10 +11,9 @@ There is currently no documentation for this API but I am working on documentati
 
 ## Hosted
 
-There is currently a realtime map hosted on heroku. It might take some reloads to wake up the free Heroku instance. Also it may be down sometime
-because the free time quota gets exhausted. I plan on hosting this on digital ocean in the future.
+There is currently a realtime map hosted here:
 
-https://norta.herokuapp.com/?routes[]=12&routes[]=11&stale=true
+http://norta.simst.im/?routes[]=12&routes[]=11&stale=true
 
 ## Deploying
 
